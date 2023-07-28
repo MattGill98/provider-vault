@@ -14,7 +14,8 @@ env:
   GOLANGCI_VERSION: 'v1.50.0'
   DOCKER_BUILDX_VERSION: 'v0.8.2'
 
-  # UPBOUND_MARKETPLACE_PUSH_ROBOT_USR: ${{ secrets.UPBOUND_MARKETPLACE_PUSH_ROBOT_USR }}
+  XPKG_REG_ORGS: docker.io/mattgill98
+  XPKG_REG_ORGS_NO_PROMOTE: docker.io/mattgill98
 
 jobs:
   detect-noop:
@@ -255,11 +256,10 @@ jobs:
 
       - name: Login to Upbound
         uses: docker/login-action@v2
-        if: env.UPBOUND_MARKETPLACE_PUSH_ROBOT_USR != ''
         with:
-          registry: xpkg.upbound.io
-          username: ${{ secrets.UPBOUND_MARKETPLACE_PUSH_ROBOT_USR }}
-          password: ${{ secrets.UPBOUND_MARKETPLACE_PUSH_ROBOT_PSW }}
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -308,5 +308,5 @@ jobs:
           name: output
           path: _output/**
 
-      # - name: Publish Artifacts
-      #   run: make publish BRANCH_NAME=${GITHUB_REF##*/}
+      - name: Publish Artifacts
+        run: make publish BRANCH_NAME=${GITHUB_REF##*/}
