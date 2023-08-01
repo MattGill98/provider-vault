@@ -9,8 +9,9 @@ import "github.com/upbound/upjet/pkg/config"
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
 var ExternalNameConfigs = map[string]config.ExternalName{
-	"vault_database_secret_backend_connection": config.NameAsIdentifier,
-	"vault_database_secret_backend_role":       config.NameAsIdentifier,
+	"vault_mount": config.ParameterAsIdentifier("path"),
+	"vault_database_secret_backend_connection": {},
+	"vault_database_secret_backend_role":       {},
 }
 
 // ExternalNameConfigurations applies all external name configs listed in the

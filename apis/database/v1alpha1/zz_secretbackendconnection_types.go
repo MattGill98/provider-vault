@@ -1026,8 +1026,17 @@ type SecretBackendConnectionParameters struct {
 	AllowedRoles []*string `json:"allowedRoles,omitempty" tf:"allowed_roles,omitempty"`
 
 	// Unique name of the Vault mount to configure.
+	// +crossplane:generate:reference:type=github.com/MattGill98/provider-vault/apis/vault/v1alpha1.Mount
 	// +kubebuilder:validation:Optional
 	Backend *string `json:"backend,omitempty" tf:"backend,omitempty"`
+
+	// Reference to a Mount in vault to populate backend.
+	// +kubebuilder:validation:Optional
+	BackendRef *v1.Reference `json:"backendRef,omitempty" tf:"-"`
+
+	// Selector for a Mount in vault to populate backend.
+	// +kubebuilder:validation:Optional
+	BackendSelector *v1.Selector `json:"backendSelector,omitempty" tf:"-"`
 
 	// Connection parameters for the cassandra-database-plugin plugin.
 	// +kubebuilder:validation:Optional
@@ -1198,9 +1207,8 @@ type SecretBackendConnectionStatus struct {
 type SecretBackendConnection struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.backend)",message="backend is a required parameter"
-	Spec   SecretBackendConnectionSpec   `json:"spec"`
-	Status SecretBackendConnectionStatus `json:"status,omitempty"`
+	Spec              SecretBackendConnectionSpec   `json:"spec"`
+	Status            SecretBackendConnectionStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true

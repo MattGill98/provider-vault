@@ -1969,6 +1969,16 @@ func (in *SecretBackendConnectionParameters) DeepCopyInto(out *SecretBackendConn
 		*out = new(string)
 		**out = **in
 	}
+	if in.BackendRef != nil {
+		in, out := &in.BackendRef, &out.BackendRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.BackendSelector != nil {
+		in, out := &in.BackendSelector, &out.BackendSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Cassandra != nil {
 		in, out := &in.Cassandra, &out.Cassandra
 		*out = make([]CassandraParameters, len(*in))
@@ -2357,6 +2367,16 @@ func (in *SecretBackendRoleParameters) DeepCopyInto(out *SecretBackendRoleParame
 		in, out := &in.Backend, &out.Backend
 		*out = new(string)
 		**out = **in
+	}
+	if in.BackendRef != nil {
+		in, out := &in.BackendRef, &out.BackendRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.BackendSelector != nil {
+		in, out := &in.BackendSelector, &out.BackendSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.CreationStatements != nil {
 		in, out := &in.CreationStatements, &out.CreationStatements

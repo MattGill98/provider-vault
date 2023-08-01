@@ -3,4 +3,5 @@ kind: Provider
 metadata:
   name: provider-vault
 spec:
-  package: MattGill98/provider-vault:v0.1.0
+  package: mattgill98/provider-vault
+  packagePullPolicy: Always

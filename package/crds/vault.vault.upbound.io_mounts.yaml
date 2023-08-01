@@ -5,18 +5,18 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
-  name: secretbackendroles.database.vault.upbound.io
+  name: mounts.vault.vault.upbound.io
 spec:
-  group: database.vault.upbound.io
+  group: vault.vault.upbound.io
   names:
     categories:
     - crossplane
     - managed
     - vault
-    kind: SecretBackendRole
-    listKind: SecretBackendRoleList
-    plural: secretbackendroles
-    singular: secretbackendrole
+    kind: Mount
+    listKind: MountList
+    plural: mounts
+    singular: mount
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -35,8 +35,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: SecretBackendRole is the Schema for the SecretBackendRoles API.
-          <no value>
+        description: Mount is the Schema for the Mounts API. <no value>
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -51,7 +50,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: SecretBackendRoleSpec defines the desired state of SecretBackendRole
+            description: MountSpec defines the desired state of Mount
             properties:
               deletionPolicy:
                 default: Delete
@@ -68,128 +67,59 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  backend:
-                    description: The path of the Database Secret Backend the role
-                      belongs to.
-                    type: string
-                  backendRef:
-                    description: Reference to a Mount in vault to populate backend.
-                    properties:
-                      name:
-                        description: Name of the referenced object.
-                        type: string
-                      policy:
-                        description: Policies for referencing.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    required:
-                    - name
-                    type: object
-                  backendSelector:
-                    description: Selector for a Mount in vault to populate backend.
-                    properties:
-                      matchControllerRef:
-                        description: MatchControllerRef ensures an object with the
-                          same controller reference as the selecting object is selected.
-                        type: boolean
-                      matchLabels:
-                        additionalProperties:
-                          type: string
-                        description: MatchLabels ensures an object with matching labels
-                          is selected.
-                        type: object
-                      policy:
-                        description: Policies for selection.
-                        properties:
-                          resolution:
-                            default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
-                            enum:
-                            - Required
-                            - Optional
-                            type: string
-                          resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
-                            enum:
-                            - Always
-                            - IfNotPresent
-                            type: string
-                        type: object
-                    type: object
-                  creationStatements:
-                    description: Database statements to execute to create and configure
-                      a user.
+                  allowedManagedKeys:
+                    description: List of managed key registry entry names that the
+                      mount in question is allowed to access
                     items:
                       type: string
                     type: array
-                  credentialConfig:
-                    additionalProperties:
+                  auditNonHmacRequestKeys:
+                    description: Specifies the list of keys that will not be HMAC'd
+                      by audit devices in the request data object.
+                    items:
                       type: string
-                    description: Specifies the configuration for the given credential_type.
-                    type: object
-                  credentialType:
-                    description: Specifies the type of credential that will be generated
-                      for the role.
-                    type: string
-                  dbName:
-                    description: Database connection to use for this role.
-                    type: string
-                  defaultTtl:
-                    description: Default TTL for leases associated with this role,
-                      in seconds.
+                    type: array
+                  auditNonHmacResponseKeys:
+                    description: Specifies the list of keys that will not be HMAC'd
+                      by audit devices in the response data object.
+                    items:
+                      type: string
+                    type: array
+                  defaultLeaseTtlSeconds:
+                    description: Default lease duration for tokens and secrets in
+                      seconds
                     type: number
-                  maxTtl:
-                    description: Maximum TTL for leases associated with this role,
-                      in seconds.
+                  description:
+                    description: Human-friendly description of the mount
+                    type: string
+                  externalEntropyAccess:
+                    description: Enable the secrets engine to access Vault's external
+                      entropy source
+                    type: boolean
+                  local:
+                    description: Local mount flag that can be explicitly set to true
+                      to enforce local mount in HA environment
+                    type: boolean
+                  maxLeaseTtlSeconds:
+                    description: Maximum possible lease duration for tokens and secrets
+                      in seconds
                     type: number
                   namespace:
                     description: Target namespace. (requires Enterprise)
                     type: string
-                  renewStatements:
-                    description: Database statements to execute to renew a user.
-                    items:
+                  options:
+                    additionalProperties:
                       type: string
-                    type: array
-                  revocationStatements:
-                    description: Database statements to execute to revoke a user.
-                    items:
-                      type: string
-                    type: array
-                  rollbackStatements:
-                    description: Database statements to execute to rollback a create
-                      operation in the event of an error.
-                    items:
-                      type: string
-                    type: array
+                    description: Specifies mount type specific options that are passed
+                      to the backend
+                    type: object
+                  sealWrap:
+                    description: Enable seal wrapping for the mount, causing values
+                      stored by the mount to be wrapped by the seal's encryption capability
+                    type: boolean
+                  type:
+                    description: Type of the backend, such as 'aws'
+                    type: string
                 type: object
               managementPolicy:
                 default: FullControl
@@ -378,66 +308,71 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: creationStatements is a required parameter
-              rule: self.managementPolicy == 'ObserveOnly' || has(self.forProvider.creationStatements)
-            - message: dbName is a required parameter
-              rule: self.managementPolicy == 'ObserveOnly' || has(self.forProvider.dbName)
+            - message: type is a required parameter
+              rule: self.managementPolicy == 'ObserveOnly' || has(self.forProvider.type)
           status:
-            description: SecretBackendRoleStatus defines the observed state of SecretBackendRole.
+            description: MountStatus defines the observed state of Mount.
             properties:
               atProvider:
                 properties:
-                  backend:
-                    description: The path of the Database Secret Backend the role
-                      belongs to.
+                  accessor:
+                    description: Accessor of the mount
                     type: string
-                  creationStatements:
-                    description: Database statements to execute to create and configure
-                      a user.
+                  allowedManagedKeys:
+                    description: List of managed key registry entry names that the
+                      mount in question is allowed to access
                     items:
                       type: string
                     type: array
-                  credentialConfig:
-                    additionalProperties:
+                  auditNonHmacRequestKeys:
+                    description: Specifies the list of keys that will not be HMAC'd
+                      by audit devices in the request data object.
+                    items:
                       type: string
-                    description: Specifies the configuration for the given credential_type.
-                    type: object
-                  credentialType:
-                    description: Specifies the type of credential that will be generated
-                      for the role.
-                    type: string
-                  dbName:
-                    description: Database connection to use for this role.
-                    type: string
-                  defaultTtl:
-                    description: Default TTL for leases associated with this role,
-                      in seconds.
+                    type: array
+                  auditNonHmacResponseKeys:
+                    description: Specifies the list of keys that will not be HMAC'd
+                      by audit devices in the response data object.
+                    items:
+                      type: string
+                    type: array
+                  defaultLeaseTtlSeconds:
+                    description: Default lease duration for tokens and secrets in
+                      seconds
                     type: number
+                  description:
+                    description: Human-friendly description of the mount
+                    type: string
+                  externalEntropyAccess:
+                    description: Enable the secrets engine to access Vault's external
+                      entropy source
+                    type: boolean
                   id:
                     type: string
-                  maxTtl:
-                    description: Maximum TTL for leases associated with this role,
-                      in seconds.
+                  local:
+                    description: Local mount flag that can be explicitly set to true
+                      to enforce local mount in HA environment
+                    type: boolean
+                  maxLeaseTtlSeconds:
+                    description: Maximum possible lease duration for tokens and secrets
+                      in seconds
                     type: number
                   namespace:
                     description: Target namespace. (requires Enterprise)
                     type: string
-                  renewStatements:
-                    description: Database statements to execute to renew a user.
-                    items:
+                  options:
+                    additionalProperties:
                       type: string
-                    type: array
-                  revocationStatements:
-                    description: Database statements to execute to revoke a user.
-                    items:
-                      type: string
-                    type: array
-                  rollbackStatements:
-                    description: Database statements to execute to rollback a create
-                      operation in the event of an error.
-                    items:
-                      type: string
-                    type: array
+                    description: Specifies mount type specific options that are passed
+                      to the backend
+                    type: object
+                  sealWrap:
+                    description: Enable seal wrapping for the mount, causing values
+                      stored by the mount to be wrapped by the seal's encryption capability
+                    type: boolean
+                  type:
+                    description: Type of the backend, such as 'aws'
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.

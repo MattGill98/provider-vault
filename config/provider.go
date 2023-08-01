@@ -8,6 +8,7 @@ import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
 
+	"github.com/MattGill98/provider-vault/config/database"
 	ujconfig "github.com/upbound/upjet/pkg/config"
 )
 
@@ -32,7 +33,7 @@ func GetProvider() *ujconfig.Provider {
 		))
 
 	for _, configure := range []func(provider *ujconfig.Provider){
-		// add custom config functions
+		database.Configure,
 	} {
 		configure(pc)
 	}

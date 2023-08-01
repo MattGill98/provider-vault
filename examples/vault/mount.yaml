@@ -1,0 +1,9 @@
+apiVersion: vault.vault.upbound.io/v1alpha1
+kind: Mount
+metadata:
+  name: db
+spec:
+  forProvider:
+    type: database
+  providerConfigRef:
+    name: example-vault

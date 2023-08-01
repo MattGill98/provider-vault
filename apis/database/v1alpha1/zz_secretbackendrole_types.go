@@ -54,8 +54,17 @@ type SecretBackendRoleObservation struct {
 type SecretBackendRoleParameters struct {
 
 	// The path of the Database Secret Backend the role belongs to.
+	// +crossplane:generate:reference:type=github.com/MattGill98/provider-vault/apis/vault/v1alpha1.Mount
 	// +kubebuilder:validation:Optional
 	Backend *string `json:"backend,omitempty" tf:"backend,omitempty"`
+
+	// Reference to a Mount in vault to populate backend.
+	// +kubebuilder:validation:Optional
+	BackendRef *v1.Reference `json:"backendRef,omitempty" tf:"-"`
+
+	// Selector for a Mount in vault to populate backend.
+	// +kubebuilder:validation:Optional
+	BackendSelector *v1.Selector `json:"backendSelector,omitempty" tf:"-"`
 
 	// Database statements to execute to create and configure a user.
 	// +kubebuilder:validation:Optional
@@ -122,7 +131,6 @@ type SecretBackendRoleStatus struct {
 type SecretBackendRole struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.backend)",message="backend is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.creationStatements)",message="creationStatements is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.dbName)",message="dbName is a required parameter"
 	Spec   SecretBackendRoleSpec   `json:"spec"`
